@@ -27,8 +27,12 @@ def save():
     for i, item in enumerate(train_loader):#The counter variable i is used to keep track of the 
         #index of the current batch, while the variable item contains a tuple of the image and 
         # its corresponding label for that batch.
-        img, label = item#数据集里的img是28*28的图片，每个像素值范围从 0 到255， 0 表示背景(白色), 255 表示前景 (黑色)
+        img, label = item#数据集里的img是28*28的图片
         img = img[0].cpu().numpy()#This line converts the PyTorch tensor object to a NumPy array.
+        #The reason why the tensor is moved to the CPU before converting it to a NumPy array is that NumPy arrays 
+        # are not supported on the GPU. Therefore, we need to move the tensor to the CPU first before converting 
+        # it to a NumPy array. This is done using the .cpu() method which moves the tensor from the GPU to the CPU. 
+        # After that, we can convert it to a NumPy array using the .numpy() method
         array = (img.reshape((28, 28)) * 255).astype(np.uint8)# This line resizes 
         #the image to 28x28 pixels and scales the pixel values to be between 0 and 255.
         img = Image.fromarray(array, 'L')#This line creates a PIL Image object from the NumPy array.
@@ -59,6 +63,9 @@ def show():
         img,label= item
         img = img[0].cpu().numpy()
         array = (img.reshape((28, 28)) * 255).astype(np.uint8)
+        #The .astype(np.uint8) method is used to convert the data type of the array from float32
+        #  to uint8. The reason why we do this is that the PIL library expects pixel values to be 
+        # in the data type of uint8 when creating an image.
         img = Image.fromarray(array, 'L')
         label = label.cpu().numpy()[0] # This line extracts the label 
         #value from the tensor object.
@@ -74,12 +81,12 @@ if __name__ == '__main__':
     test_loader = data.DataLoader(dataset=test_data, batch_size=1, shuffle=True)
     train_total = train_loader.__len__()
     test_total = test_loader.__len__()
-    labels = train_data.targets
-    print(train_data.targets)
+    labels = train_data.targets#This line extracts the labels (i.e., the correct digit values) for each sample in the training dataset.
+    print(train_data.targets)#This line prints out all of the labels in the training dataset.
     print(train_total, test_total)
     dataiter = iter(train_data)
     print(train_data)
-    images, labs = dataiter.__next__()
+    images, labs = dataiter.__next__()#切换到下一个batch
     print(type(images), type(labs))
     print(images.shape, labs)
     save()
