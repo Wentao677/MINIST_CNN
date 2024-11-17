@@ -1,0 +1,93 @@
+# Virtual Memory Study Notes
+
+## Definition and Purpose of Virtual Memory
+Virtual memory provides each program with an independent memory space. It maps virtual addresses to physical addresses to solve the following problems:
+1. **Insufficient Memory**: Programs crash when attempting to access memory beyond the physical RAM's capacity.
+2. **Memory Fragmentation**: Non-contiguous memory allocations prevent programs from running.
+3. **Security**: Different programs may access the same physical memory, causing data corruption.
+
+---
+
+## Basic Concepts of Virtual Memory
+- **Virtual Address Space**: Each program has a 32-bit address space (theoretically supporting 4GB).
+- **Physical Address Space**: Mapped to actual RAM or other storage device addresses.
+- **Mapping Table (Page Table)**: Responsible for translating virtual addresses into physical addresses.
+
+---
+
+## Problems and Solutions with Virtual Memory
+### Insufficient Memory
+- **Problem**: Limited physical memory causes crashes when a program exceeds available RAM.
+- **Solution**: Virtual memory uses a mapping system, and when memory is insufficient, swapping mechanisms transfer data between disk and RAM.
+
+### Memory Fragmentation
+- **Problem**: Non-contiguous memory allocations prevent programs from utilizing available space.
+- **Solution**: Virtual memory maps different parts of a program to non-contiguous physical memory, maintaining the illusion of contiguous memory for the program.
+
+### Security
+- **Problem**: Multiple programs accessing the same physical address can interfere with each other.
+- **Solution**: Each program has its own virtual address space, isolating physical memory access entirely.
+
+---
+
+## How Virtual Memory Works
+1. **Mapping**: 
+   - Virtual addresses are translated to physical addresses using a page table.
+   - A program's address space is virtual, while the actual physical address refers to RAM or storage.
+   
+2. **Swapping**:
+   - When data is not in RAM, it is fetched from a disk (swap memory) and mapped back to RAM.
+   - **Page Fault**: An exception raised when data is not in RAM, prompting the OS to load it from disk.
+
+3. **Page Tables**:
+   - Instead of mapping every individual word, memory is divided into **pages** (typically 4KB).
+   - Each page is mapped using page table entries (PTEs), significantly reducing the size of the table.
+
+---
+
+## Multi-Level Page Tables
+- Page tables can be organized hierarchically (e.g., two or more levels).
+- **First Level**: Points to the location of the second-level page table in memory.
+- **Second Level**: Maps virtual pages to physical pages.
+- Higher levels reduce the size of page tables stored in RAM by keeping less-used entries on disk.
+
+---
+
+## Address Translation
+1. **Offset**:
+   - The last 12 bits of both virtual and physical addresses are identical and represent the offset within a page.
+2. **Page Number**:
+   - The remaining bits in the virtual address represent the virtual page number (VPN).
+   - The page table maps the VPN to a physical page number (PPN).
+3. **Final Translation**:
+   - Combine the PPN with the offset to get the physical address.
+
+---
+
+## Performance Optimization
+1. **TLB (Translation Lookaside Buffer)**:
+   - A hardware cache in the CPU that stores recent virtual-to-physical address translations.
+   - Accessing the TLB is much faster than consulting the page table in RAM.
+
+2. **Multi-Level Caching**:
+   - Modern CPUs often include multiple levels of TLB to reduce RAM accesses.
+
+3. **DMA (Direct Memory Access)**:
+   - Allows data to be loaded from disk to RAM directly, freeing the CPU for other tasks.
+
+---
+
+## Key Terms
+- **Page Fault**: Exception raised when the requested data is not in RAM.
+- **Swapping**: Moving pages between disk and RAM.
+- **TLB**: Cache for storing recent address translations.
+- **MMU (Memory Management Unit)**: Hardware responsible for address translation and handling page faults.
+
+---
+
+## Summary
+1. Each program has its own **virtual memory space**.
+2. Virtual and physical memory are divided into **4KB pages**.
+3. Page tables map **virtual page numbers** to **physical page numbers**.
+4. **TLBs** and **multi-level page tables** improve performance and reduce memory usage.
+5. **Swapping** ensures additional memory is available, but at the cost of performance.
